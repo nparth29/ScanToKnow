@@ -25,3 +25,4 @@ flutter:
   assets:
     - images/packet_images/
     - images/intro_page_images/
+    - images/home_page_images/

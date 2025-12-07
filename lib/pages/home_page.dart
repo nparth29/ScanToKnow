@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:main_project_files/model/product_model.dart';
-import 'package:main_project_files/service/product_info.dart';
-import 'package:main_project_files/widgets/food_tile.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:main_project_files/service/product_detailed_info.dart';
+import 'package:main_project_files/widgets/top_header.dart';
+import 'package:main_project_files/pages/profile_page.dart';
+import 'package:main_project_files/widgets/top_categories.dart';
+import 'package:main_project_files/widgets/bottom_nav.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,260 +12,291 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String selectedCategory = "Snacks";
+  int _selectedTab = 0;
 
-  final List<Map<String, dynamic>> categories = [
-    {"name": "Snacks", "icon": Icons.fastfood},
-    {"name": "Drinks", "icon": Icons.local_drink_rounded},
-    {"name": "Packaged", "icon": Icons.shopping_bag},
-    {"name": "Fresh", "icon": Icons.eco},
-  ];
+  void _onTabSelected(int index) {
+    // Keep selected tab stored so bottomNav can reflect initialIndex if needed
+    setState(() => _selectedTab = index);
 
-  late List<ProductModel> products;
-  late List<ProductModel> filteredProducts;
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    products = getProducts();
-    filteredProducts = List.from(products);
-
-    _searchController.addListener(() {
-      filterProducts(_searchController.text);
-    });
-  }
-
-  void filterProducts(String query) {
-    final lowerQuery = query.toLowerCase();
-    setState(() {
-      filteredProducts = products
-          .where((product) => product.name.toLowerCase().contains(lowerQuery))
-          .toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+    // Navigate to placeholder pages for non-home tabs
+    switch (index) {
+      case 0:
+      // Home — already here, do nothing
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchPage()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanPage()));
+        break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoriesPage()));
+        break;
+      case 4:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const UploadPage()));
+        break;
+      case 5:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SmartReadPage()));
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow[50],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.yellow[50],
-        toolbarHeight: 90,
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.yellow[50],
-                borderRadius: BorderRadius.circular(12),
+      backgroundColor: Colors.grey.shade50,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TopHeader(
+                avatarAsset: 'images/home_page_images/user_logo.png',
+                onAvatarTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProfilePage()),
+                  );
+                },
               ),
-              child: Image.asset(
-                'images/intro_page_images/png_app_logo.png',
-                height: 60,
-                width: 60,
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Expanded(
-              child: Text(
-                "Know What You Eat 🍎",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            // Search Bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  hintText: "Search food item...",
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.search),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Category List
-            SizedBox(
-              height: 70,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final isSelected = category["name"] == selectedCategory;
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = category["name"];
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 15),
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.orangeAccent
-                            : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: isSelected
-                            ? [
-                          BoxShadow(
-                            color:
-                            Colors.orangeAccent.withOpacity(0.4),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
+              const SizedBox(height: 18),
+
+              // Top categories row
+              TopCategories(
+                onCategoryTap: (id, title) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$title tapped (placeholder)')),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 18),
+
+              // Advertisement carousel (placeholder)
+              SizedBox(
+                height: 150,
+                child: PageView.builder(
+                  controller: PageController(viewportFraction: 0.9),
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Ad ${index + 1} tapped (placeholder)')),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: index == 0 ? Colors.deepPurple.shade50 : Colors.deepPurple.shade100,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)
+                            ],
                           ),
-                        ]
-                            : [],
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      index == 0 ? 'Say hello to TIA' : (index == 1 ? 'Using Truthin — Rewards' : 'Eat Well. Live Well.'),
+                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Tap to learn more (placeholder)',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                    const Spacer(),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('CTA on ad ${index + 1} tapped (placeholder)')),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.deepPurple,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                      ),
+                                      child: const Text('Explore'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // right-side placeholder box
+                              Container(
+                                width: 72,
+                                height: 72,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Weekly Healthy Picks heading
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: const [
+                    Expanded(
+                      child: Text(
+                        'Weekly Healthy Picks',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Placeholder grid
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: 4,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.6,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 6)],
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            category["icon"],
-                            size: 28,
-                            color: isSelected ? Colors.white : Colors.black87,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            category["name"],
-                            style: TextStyle(
-                              color:
-                              isSelected ? Colors.white : Colors.black87,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          Container(width: 48, height: 48, color: Colors.grey.shade200),
+                          const SizedBox(width: 12),
+                          const Expanded(child: Text('Healthy Pick', style: TextStyle(fontSize: 14))),
                         ],
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Product Grid
-            Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 15,
-                  childAspectRatio: 0.65,
+                    );
+                  },
                 ),
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  final product = filteredProducts[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailPage(
-                            name: product.name,
-                            image: product.image,
-                            health: product.health,
-                            price: product.price.toString(),
-                            novaScore: 0,
-                            nutriScore: "-",
-                          ),
-                        ),
-                      );
-                    },
-                    child: FoodTile(
-                      product.name,
-                      product.image,
-                      product.health,
-                      product.nutriScore,
-                      product.novaScore,
-                    ),
-
-                  );
-                },
               ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: Container(
-        height: 75,
-        width: 75,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.orangeAccent.withOpacity(0.5),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          backgroundColor: Colors.orangeAccent,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ScanPage()),
-            );
-          },
-          child: const Icon(
-            Icons.camera_alt_outlined,
-            size: 40,
-            color: Colors.white,
+
+              const SizedBox(height: 80), // leave space for nav
+            ],
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      bottomNavigationBar: BottomNavBar(
+        initialIndex: _selectedTab,
+        onTabSelected: _onTabSelected,
+      ),
     );
   }
 }
 
-// Scanner Page
+/* ---------------------------------------------------------------------------
+   Below are simple placeholder pages for Search, Scan, Categories, Upload and SmartRead.
+   Each is intentionally minimal so you can replace with real implementations later.
+   --------------------------------------------------------------------------- */
+
+class SearchPage extends StatelessWidget {
+  const SearchPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search')),
+      body: const Center(
+        child: Text(
+          'Search page (placeholder)\nImplement search UI later.',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scanner'),
-        backgroundColor: Colors.orangeAccent,
+      appBar: AppBar(title: const Text('Scan Product')),
+      body: const Center(
+        child: Text(
+          'Scan Product (placeholder)\nReplace with your mobile scanner page when ready.',
+          textAlign: TextAlign.center,
+        ),
       ),
-      body: MobileScanner(
-        onDetect: (capture) {
-          final barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            debugPrint('Detected: ${barcode.rawValue}');
-          }
-        },
+    );
+  }
+}
+
+class CategoriesPage extends StatelessWidget {
+  const CategoriesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('All Categories')),
+      body: const Center(
+        child: Text(
+          'Categories page (placeholder)\nDisplay all categories here later.',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class UploadPage extends StatelessWidget {
+  const UploadPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Upload Product')),
+      body: const Center(
+        child: Text(
+          'Upload page (placeholder)\nImplement product upload / request flow here.',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class SmartReadPage extends StatelessWidget {
+  const SmartReadPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Smart Read')),
+      body: const Center(
+        child: Text(
+          'Smart Read (OCR) placeholder\nThis will run OCR on images and extract ingredients/nutrition.',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
