@@ -9,6 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # ---- REQUIRED for FoodService (HTTP API calls) ----
+  http: ^0.13.6
+
+  # ---- OPTIONAL but recommended (cached thumbnails, smoother UI) ----
+  cached_network_image: ^3.2.3
+
+  # Your existing dependencies (DO NOT TOUCH)
   mobile_scanner: ^3.5.6
   curved_navigation_bar: ^1.0.6
   camera: ^0.11.0+2
