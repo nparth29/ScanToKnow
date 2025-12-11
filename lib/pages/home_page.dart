@@ -302,7 +302,6 @@
 //   }
 // }
 
-
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:main_project_files/widgets/top_header.dart';
@@ -310,6 +309,10 @@ import 'package:main_project_files/pages/profile_page.dart';
 import 'package:main_project_files/widgets/top_categories.dart';
 import 'package:main_project_files/widgets/bottom_nav.dart';
 import 'package:main_project_files/pages/drinks_page.dart';
+import 'package:flutter/services.dart';
+import 'package:main_project_files/pages/tutorial_page.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -320,6 +323,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedTab = 0;
+
+  // Tutorial target keys (used by tutorial_page.dart)
+  final GlobalKey _homeNavKey = GlobalKey();
+  final GlobalKey _searchNavKey = GlobalKey();
+  final GlobalKey _scanNavKey = GlobalKey();
+  final GlobalKey _categoriesNavKey = GlobalKey();
+  final GlobalKey _uploadNavKey = GlobalKey();
+  final GlobalKey _smartReadNavKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Run tutorial after first frame. Change forceShow to true while testing.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      TutorialCoach.showBottomNavTutorial(
+        context,
+        homeKey: _homeNavKey,
+        searchKey: _searchNavKey,
+        scanKey: _scanNavKey,
+        categoriesKey: _categoriesNavKey,
+        uploadKey: _uploadNavKey,
+        smartReadKey: _smartReadNavKey,
+        // forceShow: true, // uncomment during development to ignore saved prefs
+      );
+    });
+  }
+
 
   void _onTabSelected(int index) {
     // Keep selected tab stored so bottomNav can reflect initialIndex if needed
@@ -358,8 +389,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.deepPurple, // match your header color
+        statusBarIconBrightness: Brightness.dark,    // icons (time/battery) remain readable
+      ),
+    );
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Colors.deepPurple.shade100,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -388,7 +426,7 @@ class _HomePageState extends State<HomePage> {
 
               // Advertisement carousel — tap navigates to Drinks (example)
               SizedBox(
-                height: 150,
+                height: 200,
                 child: PageView.builder(
                   controller: PageController(viewportFraction: 0.9),
                   itemCount: 3,
@@ -407,7 +445,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: index == 0 ? Colors.deepPurple.shade50 : Colors.deepPurple.shade100,
+                            color:  Colors.deepPurple.shade50  ,
                             borderRadius: BorderRadius.circular(18),
                             boxShadow: [
                               BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)
@@ -439,7 +477,11 @@ class _HomePageState extends State<HomePage> {
                                         backgroundColor: Colors.deepPurple,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                       ),
-                                      child: const Text('Explore'),
+                                      child: const Text(
+                                          'Explore',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),),
                                     ),
                                   ],
                                 ),
@@ -524,7 +566,14 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavBar(
         initialIndex: _selectedTab,
         onTabSelected: _onTabSelected,
+        homeKey: _homeNavKey,
+        searchKey: _searchNavKey,
+        scanKey: _scanNavKey,
+        categoriesKey: _categoriesNavKey,
+        uploadKey: _uploadNavKey,
+        smartReadKey: _smartReadNavKey,
       ),
+
     );
   }
 }

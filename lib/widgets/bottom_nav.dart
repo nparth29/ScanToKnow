@@ -1,14 +1,31 @@
+// lib/widgets/bottom_nav.dart
 import 'package:flutter/material.dart';
 
-/// BottomNavBar (programmatic icons, no image assets)
-/// - Simple, plain icons so it won't match the sample exactly.
-/// - Selected item shows a subtle circular background.
-/// - Fires onTabSelected(index) when tapped.
+/// BottomNavBar with optional GlobalKeys for tutorial targeting.
+/// Backwards-compatible: if you don't supply keys, it behaves exactly as before.
 class BottomNavBar extends StatefulWidget {
   final ValueChanged<int>? onTabSelected;
   final int initialIndex;
 
-  const BottomNavBar({super.key, this.onTabSelected, this.initialIndex = 0});
+  // OPTIONAL keys that allow an external tutorial to target each item.
+  final GlobalKey? homeKey;
+  final GlobalKey? searchKey;
+  final GlobalKey? scanKey;
+  final GlobalKey? categoriesKey;
+  final GlobalKey? uploadKey;
+  final GlobalKey? smartReadKey;
+
+  const BottomNavBar({
+    super.key,
+    this.onTabSelected,
+    this.initialIndex = 0,
+    this.homeKey,
+    this.searchKey,
+    this.scanKey,
+    this.categoriesKey,
+    this.uploadKey,
+    this.smartReadKey,
+  });
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -54,7 +71,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-    final Color selectedColor = const Color(0xFF6B4EFF); // distinct purple-ish color (not sample)
+    final Color selectedColor = const Color(0xFF6B4EFF); // distinct purple-ish color (same as before)
     final Color inactiveColor = Colors.grey.shade600;
 
     return Material(
@@ -75,8 +92,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
               final item = _items[index];
               final bool selected = index == _selectedIndex;
 
+              // Pick the correct key for this index (if provided)
+              final GlobalKey? keyForIndex = _keyForIndex(index);
+
               return Expanded(
                 child: InkWell(
+                  // Attach the key to the InkWell so tutorial_coach_mark can find it
+                  key: keyForIndex,
                   onTap: () => _onTap(index),
                   borderRadius: BorderRadius.circular(12),
                   child: Column(
@@ -123,6 +145,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
       ),
     );
+  }
+
+  GlobalKey? _keyForIndex(int index) {
+    switch (index) {
+      case 0:
+        return widget.homeKey;
+      case 1:
+        return widget.searchKey;
+      case 2:
+        return widget.scanKey;
+      case 3:
+        return widget.categoriesKey;
+      case 4:
+        return widget.uploadKey;
+      case 5:
+        return widget.smartReadKey;
+      default:
+        return null;
+    }
   }
 }
 

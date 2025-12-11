@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  tutorial_coach_mark: ^1.2.3
+  shared_preferences: ^2.1.1
 
   # ---- REQUIRED for FoodService (HTTP API calls) ----
   http: ^0.13.6
