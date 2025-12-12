@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'intro_page3.dart'; // next page
+import 'intro_page3.dart';
 
 class IntroPage2 extends StatelessWidget {
   const IntroPage2({super.key});
@@ -7,22 +7,20 @@ class IntroPage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange[100], // Light orange background
+      backgroundColor: Colors.orange[100],
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Centered Image
+              const Spacer(),
+
               Image.asset(
                 'images/intro_page_images/intro_page2.png',
                 height: 250,
               ),
               const SizedBox(height: 40),
 
-              // Page Title
               const Text(
                 "Know What You Eat",
                 textAlign: TextAlign.center,
@@ -34,18 +32,14 @@ class IntroPage2 extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Description
               const Text(
                 "Scan ingredients or barcodes to discover how healthy your food really is.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black87,
-                ),
+                style: TextStyle(fontSize: 18, color: Colors.black87),
               ),
-              const SizedBox(height: 60),
 
-              // Next Button
+              const Spacer(),
+
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrangeAccent,
@@ -68,47 +62,34 @@ class IntroPage2 extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // Page Indicator Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Inactive dot
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _inactiveDot(),
                   const SizedBox(width: 8),
-
-                  // Active dot (this page)
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                      color: Colors.deepOrangeAccent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _activeDot(Colors.deepOrangeAccent),
                   const SizedBox(width: 8),
-
-                  // Inactive dot
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _inactiveDot(),
                 ],
               ),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _activeDot(Color color) => Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
+
+  Widget _inactiveDot() => Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(color: Colors.grey[400], shape: BoxShape.circle),
+  );
 }

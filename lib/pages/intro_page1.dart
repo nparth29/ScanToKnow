@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'intro_page2.dart'; // Import the next intro page
+import 'intro_page2.dart';
 
 class IntroPage1 extends StatelessWidget {
   const IntroPage1({super.key});
@@ -7,15 +7,14 @@ class IntroPage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow[100], // Light yellow background
+      backgroundColor: Colors.yellow[100],
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // App Logo / Illustration
+              const Spacer(),
+
               Icon(
                 Icons.camera_alt_outlined,
                 size: 100,
@@ -23,7 +22,6 @@ class IntroPage1 extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // App Introduction Text
               const Text(
                 "Welcome to Scan to Know!",
                 textAlign: TextAlign.center,
@@ -34,6 +32,7 @@ class IntroPage1 extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+
               const Text(
                 "Scan any food product's barcode or ingredients and instantly know its health rating.",
                 textAlign: TextAlign.center,
@@ -42,9 +41,9 @@ class IntroPage1 extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 60),
 
-              // Next Button
+              const Spacer(),
+
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orangeAccent,
@@ -54,10 +53,9 @@ class IntroPage1 extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Navigate to next intro page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => IntroPage2()),
+                    MaterialPageRoute(builder: (context) => const IntroPage2()),
                   );
                 },
                 child: const Text(
@@ -68,44 +66,34 @@ class IntroPage1 extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // Page Indicator Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Active dot (this page)
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _activeDot(Colors.orangeAccent),
                   const SizedBox(width: 8),
-                  // Inactive dots
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _inactiveDot(),
                   const SizedBox(width: 8),
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  _inactiveDot(),
                 ],
               ),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _activeDot(Color color) => Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
+
+  Widget _inactiveDot() => Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(color: Colors.grey[400], shape: BoxShape.circle),
+  );
 }
